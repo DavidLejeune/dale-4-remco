@@ -240,6 +240,18 @@ $Host.PrivateData.ProgressBackgroundColor = $bckgrnd
         }
     }
 
+    function write_darkgreen($msg)
+    {
+        Write-Host "$($msg)" -ForegroundColor DarkGreen;
+    }
+    function write_blue($msg)
+    {
+        Write-Host "$($msg)" -ForegroundColor Blue;
+    }
+    function write_yellow($msg)
+    {
+        Write-Host "$($msg)" -ForegroundColor Yellow;
+    }
     function write_warning($msg)
     {
         Write-Host "$($msg)" -BackgroundColor Red -ForegroundColor White;
@@ -270,7 +282,7 @@ function Uninstall-Panda(){
 
     $search_value="Putty";
     write_banner_info "Searching for installed products that contain : $search_value"
-        $products = Get-WmiObject -Class Win32_Product;   
+    $products = Get-WmiObject -Class Win32_Product;   
     $iCount=0; 
     $iCount2=0;  
     $iCount3=0;     
@@ -280,37 +292,42 @@ function Uninstall-Panda(){
             $iCount = $iCount + 1;
         }
     }
-   write_banner_darkgreen "Found $iCount installed $search_value product(s)";
+   write_darkgreen "  Found $iCount installed $search_value product(s)";
+   write-host "";
     foreach($product in $products)
     {
         if ( $product.Name -like "*$search_value*") 
         {
             $result = $product.Name;
             $iCount2=$iCount2+1;
-            write_banner_darkgreen $result;
-            write_banner_info "Uninstalling $search_value product [$iCount2/$iCount]";
+            write_regular "  [$iCount2/$iCount] $result";
+            write_regular "  Uninstalling ...";
             #(get-wmiobject -class Win32_Product -filter "Name=$result").Uninstall();
             #wmic product where name="$result" call uninstall
             #$app = Get-WmiObject -Class Win32_Product -Filter "Name = '$result'";
             #$app.uninstall;
             $delete_result = (Get-WmiObject -Class Win32_Product -Filter "Name = '$result'").Uninstall();
             if ($delete_result.ReturnValue -eq 0) {
-                write_regular "Product $result uninstall succeeded"
+                write_yellow "  Uninstall succeeded"
                 $iCount3=$iCount3+1;
             }
             else {
-                write_warning "Product $result uninstall failed"
+                write_warning "  Uninstall failed"
             }
         }
     }
     write-host"";
-    write-host ">>>>>> RESULT";
+    write-host " >>>>>> RESULT";
     if ($iCount3 -eq $iCount){
         write_banner_regular "$iCount3 of $iCount $search_value product(s) deleted"
+        write-Host "";
+        write_banner_warning "The computer will need to restart for all changes to take effect";
+        shutdown /r /t 25
     }
     else{
         write_banner_warning "$iCount3 of iCount $search_value product(s) deleted"
-        write_banner_warning "YOU WILL NEED TO UNINSTALL THIS MANUALLY"
+        write_banner_warning "YOU WILL NEED TO UNINSTALL THIS MANUALLY !!!!!!!!!!!!!!!!!!!!!!!"
+        exit
     }
 }
 
