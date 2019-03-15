@@ -240,8 +240,28 @@ $Host.PrivateData.ProgressBackgroundColor = $bckgrnd
         }
     }
 
+    function write_warning($msg)
+    {
+        Write-Host "$($msg)" -BackgroundColor Red -ForegroundColor White;
+    }
+     
+    function write_info($msg)
+    {
+        Write-Host "$($msg)" -ForegroundColor Blue;
+    }
+    
+    function write_regular($msg)
+    {
+        Write-Host "$($msg)" -ForegroundColor White;
+    }
+    
+    function write_action($msg)
+    {
+        Write-Host "$($msg)" -ForegroundColor DarkGreen;
+    }
 
 # END OUTPUT FUNCTIONS ================================================================================
+
 
 
 # Functions 4 Remco
@@ -251,25 +271,47 @@ function Uninstall-Panda(){
     $search_value="Putty";
     write_banner_info "Searching for installed products that contain : $search_value"
         $products = Get-WmiObject -Class Win32_Product;   
-    $iCount=0;      
+    $iCount=0; 
+    $iCount2=0;  
+    $iCount3=0;     
     foreach($product in $products)
     {
         if ( $product.Name -like "*$search_value*") {
             $iCount = $iCount + 1;
         }
     }
-   write_banner_darkgreen "Found $iCount installed products that contain : $search_value";
+   write_banner_darkgreen "Found $iCount installed $search_value product(s)";
     foreach($product in $products)
     {
-        if ( $product.Name -like "*$search_value*") {
-            $result = "Name : " + $product.Name;
-            write-Host $result;
-            #give choice to delete
-                #check if result code is 0
+        if ( $product.Name -like "*$search_value*") 
+        {
+            $result = $product.Name;
+            $iCount2=$iCount2+1;
+            write_banner_darkgreen $result;
+            write_banner_info "Uninstalling $search_value product [$iCount2/$iCount]";
+            #(get-wmiobject -class Win32_Product -filter "Name=$result").Uninstall();
+            #wmic product where name="$result" call uninstall
+            #$app = Get-WmiObject -Class Win32_Product -Filter "Name = '$result'";
+            #$app.uninstall;
+            $delete_result = (Get-WmiObject -Class Win32_Product -Filter "Name = '$result'").Uninstall();
+            if ($delete_result.ReturnValue -eq 0) {
+                write_regular "Product $result uninstall succeeded"
+                $iCount3=$iCount3+1;
+            }
+            else {
+                write_warning "Product $result uninstall failed"
+            }
         }
     }
-
-
+    write-host"";
+    write-host ">>>>>> RESULT";
+    if ($iCount3 -eq $iCount){
+        write_banner_regular "$iCount3 of $iCount $search_value product(s) deleted"
+    }
+    else{
+        write_banner_warning "$iCount3 of iCount $search_value product(s) deleted"
+        write_banner_warning "YOU WILL NEED TO UNINSTALL THIS MANUALLY"
+    }
 }
 
 
