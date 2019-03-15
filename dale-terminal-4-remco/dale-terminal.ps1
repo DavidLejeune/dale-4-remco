@@ -244,6 +244,52 @@ $Host.PrivateData.ProgressBackgroundColor = $bckgrnd
 # END OUTPUT FUNCTIONS ================================================================================
 
 
+# Functions 4 Remco
+
+function Uninstall-Panda(){
+
+    $search_value="Putty";
+    write_banner_info "Searching for installed products that contain : $search_value"
+        $products = Get-WmiObject -Class Win32_Product;   
+    $iCount=0;      
+    foreach($product in $products)
+    {
+        if ( $product.Name -like "*$search_value*") {
+            $iCount = $iCount + 1;
+        }
+    }
+   write_banner_darkgreen "Found $iCount installed products that contain : $search_value";
+    foreach($product in $products)
+    {
+        if ( $product.Name -like "*$search_value*") {
+            $result = "Name : " + $product.Name;
+            write-Host $result;
+            #give choice to delete
+                #check if result code is 0
+        }
+    }
+
+
+}
+
+
+
+function Start-Install-SEP(){
+
+    $architecture=(Get-WmiObject Win32_OperatingSystem ).OSArchitecture;
+    if ( $architecture -like '*64*') {
+        Write-Host "this is a 64 bit operating system";
+        $architecture;
+    }
+    else {
+        Write-Host "this is NOT a 64 bit operating system";
+        $architecture;
+    }
+}
+
+
+
+
 #------------------------------------------------------------------------------
 #Script Variables
 #------------------------------------------------------------------------------
@@ -273,6 +319,14 @@ show_header;
 
 $animation_msg="LOADING";
 ProcessingAnimation { Start-Sleep 2 }
+
+
+show_header;
+Uninstall-Panda
+pause
+
+show_header;
+Start-Install-SEP
 
 
 
