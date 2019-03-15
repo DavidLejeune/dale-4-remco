@@ -5,12 +5,14 @@ function show_description(){
     #feeding the narcistic beast
     Write-Host "# Description" -ForegroundColor white
     Write-Host "# -----------" -ForegroundColor white
-    Write-Host "#  <WRITE TITLE HERE> " -ForegroundColor yellow
+    Write-Host "#  SEP installer 4 Remco " -ForegroundColor yellow
     Write-Host ""
     Write-Host "# Author : David Lejeune" -ForegroundColor magenta
-    Write-Host "# Created : <DATE>" -ForegroundColor magenta
+    Write-Host "# Created : 16-03-2019" -ForegroundColor magenta
     Write-Host ""
-    standard_options;
+    Write-Host "# Rovacon tool to facilitate new anti-virus software for Remco" -ForegroundColor green
+    Write-Host "# > Find and uninstall Panda products" -ForegroundColor green
+    Write-Host "# > Install Symantec Endpoint Protection for correct architecture" -ForegroundColor green
 
 }
 #------------------------------------------------------------------------------
@@ -396,6 +398,10 @@ show_header;
 $animation_msg="LOADING";
 ProcessingAnimation { Start-Sleep 2 }
 
+
+show_header;
+show_description
+start-sleep 10
 
 show_header;
 Uninstall-Panda
