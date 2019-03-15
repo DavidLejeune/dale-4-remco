@@ -335,7 +335,8 @@ function Uninstall-Panda(){
 
 
 
-            shutdown /r /t 25
+            shutdown /r /t 25;
+            start-sleep 25;
         }
         else{
             write_banner_warning "$iCount3 of $iCount $search_value product(s) deleted"
@@ -434,15 +435,15 @@ ProcessingAnimation { Start-Sleep 2 }
 
 
 show_header;
-show_description
-start-sleep 10
+show_description;
+start-sleep 10;
 
 show_header;
-Uninstall-Panda
+Uninstall-Panda;
 
 show_header;
-Start-Install-SEP
-start-sleep 10
+Start-Install-SEP;
+start-sleep 10;
 
 
 show_header;
