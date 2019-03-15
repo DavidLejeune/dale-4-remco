@@ -318,32 +318,49 @@ function Uninstall-Panda(){
     }
     write-host"";
     write-host " >>>>>> RESULT";
-    if ($iCount3 -eq $iCount){
-        write_banner_regular "$iCount3 of $iCount $search_value product(s) deleted"
-        write-Host "";
-        write_banner_warning "The computer will need to restart for all changes to take effect";
-        shutdown /r /t 25
+    if ($iCount -gt 0){
+        if ($iCount3 -eq $iCount){
+            write_banner_regular "$iCount3 of $iCount $search_value product(s) deleted"
+            write-Host "";
+            write_banner_warning "The computer will need to restart for all changes to take effect";
+            shutdown /r /t 25
+        }
+        else{
+            write_banner_warning "$iCount3 of iCount $search_value product(s) deleted"
+            write_banner_warning "YOU WILL NEED TO UNINSTALL THIS MANUALLY !!!!!!!!!!!!!!!!!!!!!!!"
+        }
     }
-    else{
-        write_banner_warning "$iCount3 of iCount $search_value product(s) deleted"
-        write_banner_warning "YOU WILL NEED TO UNINSTALL THIS MANUALLY !!!!!!!!!!!!!!!!!!!!!!!"
-        exit
+    else {
+        
+        write_banner_warning "No products that contain $search_value were found"
     }
+    
+start-sleep 10
 }
 
 
 
 function Start-Install-SEP(){
-
+    
+    write_banner_info "Installing Symantec Endpoint Protection for this workstation "
     $architecture=(Get-WmiObject Win32_OperatingSystem ).OSArchitecture;
+    write-host ""
+    write_darkgreen "  Determining operating architecture"
+    write-host""
     if ( $architecture -like '*64*') {
-        Write-Host "this is a 64 bit operating system";
-        $architecture;
+        Write-Host "  This is a 64 bit operating system";
+        $app="$env:USERPROFILE\dale-terminal-4-remco\SEP\64-bit\setup.msi"
+        #$architecture;
     }
     else {
-        Write-Host "this is NOT a 64 bit operating system";
-        $architecture;
+        Write-Host "  This is NOT a 64 bit operating system";
+        $app="$env:USERPROFILE\dale-terminal-4-remco\SEP\64-bit\setup.msi"
+        #$architecture;
     }
+    
+    write_regular "  Installing $app ...... "
+    Start-Process powershell -NoNewWindow -ArgumentList "(Start-Process -FilePath $app).ExitCode"
+  
 }
 
 
@@ -359,7 +376,7 @@ $ParentPath = $CurrentPath.Replace("\dale-terminal-4-remco", "");
 $animation_msg="";
 
 # Standard menu
-$Menu="Script for Remco to uninstall Panda and install Symantec Endpoint Protection"
+$Menu="Script 4 Remco to uninstall Panda and install Symantec Endpoint Protection"
 
 
 
@@ -382,10 +399,11 @@ ProcessingAnimation { Start-Sleep 2 }
 
 show_header;
 Uninstall-Panda
-pause
 
 show_header;
 Start-Install-SEP
+start-sleep 10
+
 
 
 
