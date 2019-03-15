@@ -325,10 +325,20 @@ function Uninstall-Panda(){
             write_banner_regular "$iCount3 of $iCount $search_value product(s) deleted"
             write-Host "";
             write_banner_warning "The computer will need to restart for all changes to take effect";
+
+            # Creating the shortcut in startup so after uninstall Panda , install SEP continues
+            $objShell = New-Object -ComObject ("WScript.Shell")
+            $objShortCut = $objShell.CreateShortcut($env:USERPROFILE + "\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup" + "\dale-terminal.lnk")
+            $tg_path=$env:USERPROFILE + "\dale-terminal-4-remco\dale-terminal.ps1";
+            $objShortCut.TargetPath= $tg_path
+            $objShortCut.Save()
+
+
+
             shutdown /r /t 25
         }
         else{
-            write_banner_warning "$iCount3 of iCount $search_value product(s) deleted"
+            write_banner_warning "$iCount3 of $iCount $search_value product(s) deleted"
             write_banner_warning "YOU WILL NEED TO UNINSTALL THIS MANUALLY !!!!!!!!!!!!!!!!!!!!!!!"
         }
     }
@@ -363,6 +373,30 @@ function Start-Install-SEP(){
     write_regular "  Installing $app ...... "
     Start-Process powershell -NoNewWindow -ArgumentList "(Start-Process -FilePath $app).ExitCode"
   
+}
+
+function clean-up(){
+
+    write_banner_info "Cleaning up install files"
+    start-sleep 10;
+
+    # creating the delete script
+    $app="$env:USERPROFILE\dale-terminal-4-remco\cleanup.ps1"
+    $app;
+    $str=""
+    echo "" | out-file $app  
+
+    $tg_path='"' + $env:USERPROFILE + "\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup" + "\dale-terminal.lnk" + '"';
+    $tg_path;
+    $str="Remove-Item -Recurse -Force " + $tg_path
+    echo $str | Add-Content  $app
+
+
+    $str="Remove-Item -Recurse -Force " + '"' + $env:USERPROFILE + "\dale-terminal-4-remco\" + '"'
+    echo $str | Add-Content $app    
+
+    & Start-Process powershell -NoNewWindow -ArgumentList "(Start-Process -FilePath $app).ExitCode"
+
 }
 
 
@@ -411,6 +445,6 @@ Start-Install-SEP
 start-sleep 10
 
 
+show_header;
+clean-up
 
-
-pause
