@@ -52,7 +52,6 @@ $Host.PrivateData.ProgressBackgroundColor = $bckgrnd
 #------------------------------------------------------------------------------
 
     function show_header(){
-
         Clear-Host
         $dt = Get-Date
         $user_name=$env:UserName
@@ -61,7 +60,6 @@ $Host.PrivateData.ProgressBackgroundColor = $bckgrnd
         $os = Get-WmiObject -Class Win32_OperatingSystem | ForEach-Object -MemberName Caption;
         $cool_info= "[DOMAIN:$user_domain]   [COMPUTER NAME:$computer_name]   [USER:$user_name]";
         write_reverse_banner_darkblue "$dt";
-        #write_reverse_banner_red "WinServer CLI";
         write_reverse_banner_red "$os";
         write_banner_darkblue "..................................................................................................................."
         write_banner_darkblue "......%%%%%....%%%%...%%......%%%%%%..........%%%%%%..%%%%%%..%%%%%...%%...%%..%%%%%%..%%..%%...%%%%...%%.........."
@@ -70,12 +68,6 @@ $Host.PrivateData.ProgressBackgroundColor = $bckgrnd
         write_banner_darkblue "......%%..%%..%%..%%..%%......%%................%%....%%......%%..%%..%%...%%....%%....%%..%%..%%..%%..%%.........."
         write_banner_darkblue "......%%%%%...%%..%%..%%%%%%..%%%%%%............%%....%%%%%%..%%..%%..%%...%%..%%%%%%..%%..%%..%%..%%..%%%%%%......"
         write_banner_darkblue "..................................................................................................................."
-
-        #write_banner_darkblue "...%%%%%....%%%%...%%......%%%%%%.........%%...%%..%%%%%%..%%..%%...%%%%...%%%%%%..%%%%%...%%..%%..%%%%%%..%%%%%..."
-        #write_banner_darkblue "...%%..%%..%%..%%..%%......%%.............%%...%%....%%....%%%.%%..%%......%%......%%..%%..%%..%%..%%......%%..%%.."
-        #write_banner_darkblue "...%%..%%..%%%%%%..%%......%%%%...........%%.%.%%....%%....%%.%%%...%%%%...%%%%....%%%%%...%%..%%..%%%%....%%%%%..."
-        #write_banner_darkblue "...%%..%%..%%..%%..%%......%%.............%%%%%%%....%%....%%..%%......%%..%%......%%..%%...%%%%...%%......%%..%%.."
-        #write_banner_darkblue "...%%%%%...%%..%%..%%%%%%..%%%%%%..........%%.%%...%%%%%%..%%..%%...%%%%...%%%%%%..%%..%%....%%....%%%%%%..%%..%%.."
         write_reverse_banner_red $cool_info;
         write_banner_darkblue $Menu;
         Write-Host ''
@@ -278,6 +270,10 @@ $Host.PrivateData.ProgressBackgroundColor = $bckgrnd
 
 
 
+#------------------------------------------------------------------------------
+#Script Specific functions
+#------------------------------------------------------------------------------
+
 # Functions 4 Remco
 
 function Uninstall-Panda(){
@@ -338,7 +334,7 @@ function Uninstall-Panda(){
             start-sleep 25;
         }
         else{
-            write_banner_warning "$iCount3 of $iCount $search_value product(s) deleted"
+            write_banner_warning "$iCount3 of $iCount $search_value product(s) uninstalled"
             write_banner_warning "YOU WILL NEED TO UNINSTALL THIS MANUALLY !!!!!!!!!!!!!!!!!!!!!!!"
         }
     }
@@ -369,9 +365,13 @@ function Start-Install-SEP(){
         $app="$env:USERPROFILE\dale-terminal-4-remco\SEP\64-bit\setup.msi"
         #$architecture;
     }
-    
-    write_regular "  Installing $app ...... "
-    Start-Process powershell -NoNewWindow -ArgumentList "(Start-Process -FilePath $app).ExitCode"
+    # copy the setup file to temp folder of user
+    $app2="$env:USERPROFILE\AppData\Local\Temp\"
+    Copy-Item $app $app2
+    $app2=$app2 + "setup.msi"
+    write_regular "  Installing $app2  "
+    Start-Process powershell -NoNewWindow -ArgumentList "(Start-Process -FilePath $app2).ExitCode";
+    start-sleep 15
   
 }
 
@@ -439,9 +439,8 @@ Uninstall-Panda;
 
 show_header;
 Start-Install-SEP;
-start-sleep 10;
 
 
 show_header;
-clean-up
+clean-up;
 
