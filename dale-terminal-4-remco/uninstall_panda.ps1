@@ -278,7 +278,7 @@ $Host.PrivateData.ProgressBackgroundColor = $bckgrnd
 
 function Uninstall-Panda(){
 
-    $search_value="Putty";
+    $search_value="Panda";
     write_banner_info "Searching for installed products that contain : $search_value"
     $products = Get-WmiObject -Class Win32_Product;   
     $iCount=0; 

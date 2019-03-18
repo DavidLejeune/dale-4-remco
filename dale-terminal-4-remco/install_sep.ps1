@@ -284,18 +284,18 @@ function Start-Install-SEP(){
     write-host""
     if ( $architecture -like '*64*') {
         Write-Host "  This is a 64 bit operating system";
-        $app="$PSScriptRoot\SEP\64-bit\setup.msi"
+        $app="$PSScriptRoot\SEP\64-bit\setup.exe"
         #$architecture;
     }
     else {
         Write-Host "  This is NOT a 64 bit operating system";
-        $app="$PSScriptRoot\SEP\64-bit\setup.msi"
+        $app="$PSScriptRoot\SEP\64-bit\setup.exe"
         #$architecture;
     }
     # copy the setup file to temp folder of user
     #$app2="$env:USERPROFILE\AppData\Local\Temp\"
     #Copy-Item $app $app2
-    #$app2=$app2 + "setup.msi"
+    #$app2=$app2 + "setup.exe"
     write_regular "  Installing $app2  "
     Start-Process powershell -NoNewWindow -ArgumentList "(Start-Process -FilePath $app).ExitCode";
     start-sleep 15
